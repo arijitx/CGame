@@ -7,7 +7,11 @@
 
 #include<bits/stdc++.h>
 
+#include "server_comm.h"
+
 using namespace std;
+
+
 
 //send static html files
 string static_html(string path){
@@ -39,8 +43,8 @@ string path_create_game(PARAMS){
   }
   string player=name;
   string game_id=name.append("xxx2");
-  game* g=new game(game_id,player);
-  game_array.insert(game_pair(game_id,g));
+  // game* g=new game(game_id,player);
+  // game_array.insert(game_pair(game_id,g));
   resp.append("Set-Cookie: game_id=");
   resp.append(game_id);
   resp.append("\nSet-Cookie: player=");
@@ -52,6 +56,11 @@ string path_create_game(PARAMS){
   resp.append("{\"status\":\"success\",\"game_id\":\"");
   resp.append(name);
   resp.append("\"}");
+  string m="raw,";
+  m+=game_id;
+  m+=",";
+  m+=player;
+  send_msg(m);
   return resp;
 }
 
@@ -59,17 +68,17 @@ string path_create_game(PARAMS){
 string path_board(PARAMS){
   string game_id=data["game_id"];
   string resp="";
-  if(game_array.find(game_id) != game_array.end()){
-    game* g=game_array[game_id];
-    resp.append("Content-Type: application/json\n\n");
-    resp.append("{\"status\":\"success\",\"board\":");
-    resp.append(g->get_board());
-    resp.append("}");
-  }
-  else{
-    resp.append("Content-Type: application/json\n\n");
-    resp.append("{\"status\":\"fail\",\"msg\":\"no game exits\"");
-  }
+  // if(game_array.find(game_id) != game_array.end()){
+  //   game* g=game_array[game_id];
+  //   resp.append("Content-Type: application/json\n\n");
+  //   resp.append("{\"status\":\"success\",\"board\":");
+  //   resp.append(g->get_board());
+  //   resp.append("}");
+  // }
+  // else{
+  //   resp.append("Content-Type: application/json\n\n");
+  //   resp.append("{\"status\":\"fail\",\"msg\":\"no game exits\"");
+  // }
   return resp;
 }
 
@@ -79,30 +88,31 @@ string path_update_board(PARAMS){
   string player=data["player"];
   string x=data["x"];
   string y=data["y"];
-  game* g=game_array[game_id];
-  string resp="Content-Type: application/json\n\n";
-  int xi=atoi(x.c_str());
-  int yi=atoi(y.c_str());
-  int playeri=g->get_player_by_name(player);
-  int retval=g->update_board(xi,yi,playeri);
-  if(retval==1){
-    resp.append("{\"status\":\"success\"}");
-  }
-  if(retval==-1){
-    resp.append("{\"status\":\"fail\",\"msg\":\"not your turn\"}");
-  }
-  if(retval==0){
-    resp.append("{\"status\":\"fail\",\"msg\":\"place already occupied\"}");
-  }
-  return resp;
+  // game* g=game_array[game_id];
+  // string resp="Content-Type: application/json\n\n";
+  // int xi=atoi(x.c_str());
+  // int yi=atoi(y.c_str());
+  // int playeri=g->get_player_by_name(player);
+  // int retval=g->update_board(xi,yi,playeri);
+  // if(retval==1){
+  //   resp.append("{\"status\":\"success\"}");
+  // }
+  // if(retval==-1){
+  //   resp.append("{\"status\":\"fail\",\"msg\":\"not your turn\"}");
+  // }
+  // if(retval==0){
+  //   resp.append("{\"status\":\"fail\",\"msg\":\"place already occupied\"}");
+  // }
+  // return resp;
+  return "";
 }
 
 //connect player_2
 string path_connect(PARAMS){
   string game_id=data["game_id"];
   string player=data["player"];
-  game *g=game_array[game_id];
-  g->update_player_2(player);
+  // game *g=game_array[game_id];
+  // g->update_player_2(player);
   string resp="";
   resp.append("Set-Cookie: game_id=");
   resp.append(game_id);
@@ -113,6 +123,11 @@ string path_connect(PARAMS){
   resp.append("\n");
   resp.append("Content-Type: application/json\n\n");
   resp.append("{\"status\":\"success\"}");
+  string m="raw,";
+  m+=game_id;
+  m+=",";
+  m+=player;
+  send_msg(m);
   return resp;
 }
 

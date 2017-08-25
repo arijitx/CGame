@@ -12,10 +12,10 @@
 #include "config.h"
 #include "http.h"
 #include "game.h"
-#include "process_game.h"
+
 #include "libwshandshake.hpp"
 #include "ws_util.h"
-
+#include "process_game.h"
 #include <iostream>
 
 
@@ -38,7 +38,6 @@ void * respond(void *arg){
   int flag;
   int status_code=-1;
   rcvd=recv(client,req,9999,0);
-
   if(rcvd>0){
     if(strstr(req,"raw")!=NULL){
       string retval=handle_raw_msg(req);
@@ -55,11 +54,10 @@ void * respond(void *arg){
       send(client,resp.c_str(),strlen(resp.c_str()),0);
       string msg="";
       while(1){
-        cout<<"msg incoming"<<endl;
         msg=decode(client);
-        resp=process(msg);
+        resp=process(msg,client);
         r=encode(resp);
-        send(client,r.c_str(),sizeof(r.c_str()),0);
+        send(client,r.c_str(),strlen(r.c_str()),0);
       }
     }
     shutdown(client,SHUT_RDWR);

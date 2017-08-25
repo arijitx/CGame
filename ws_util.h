@@ -50,7 +50,7 @@ string decode(int client){
 
 
 string encode(string msg){
-    int payload_len=msg.length()+1;
+    int payload_len=msg.length();
     string decoded_msg="";
     int len;
     char c=bitset<8>("10000001").to_ulong();

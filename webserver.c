@@ -12,8 +12,6 @@
 #include "http.h"
 #include "game.h"
 
-map<string,game*> game_array;
-typedef std::pair<std::string, game*> game_pair;
 
 #include "paths.h"
 
@@ -88,7 +86,7 @@ int start_server(int PORT){
 }
 
 int main(){
-  int PORT=8001;
+  int PORT=8080;
   //printing menu and options and Configs
   print_header(1);
   print_config();

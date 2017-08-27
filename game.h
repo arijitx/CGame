@@ -13,6 +13,8 @@ class game{
     bool ready;
     int turn;
     int board[3][3];
+    int move_count=0;
+    int winner=0;
 
   public:
     game(string gid,string p1){
@@ -26,6 +28,43 @@ class game{
       for(int i=0;i<3;i++)
         for(int j=0;j<3;j++)
           this->board[i][j]=0;
+    }
+    bool valid(int x,int y)
+    {
+       if(x>=0 && y>=0 && x<=2 && y<=2)
+       return 1;
+       return 0;
+    }
+    int  is_win(int x,int y,int mark){
+      int res=0;
+      for(int x=0;x<=2;x++)
+      {
+          for(int y=0;y<=2;y++)
+          {
+            if(this->board[x][y]==mark)
+            {
+            int win=0;
+		         if(valid(x-1,y+1) && valid(x-2,y+2) && this->board[x-1][y+1]==mark && this->board[x-2][y+2]==mark)
+		            win=1;
+		          if(valid(x-1,y) && valid(x-2,y) && this->board[x-1][y]==mark && this->board[x-2][y]==mark)
+		         win=1;
+		         if(valid(x-1,y-1) && valid(x-2,y-2) && this->board[x-1][y-1]==mark && this->board[x-2][y-2]==mark)
+		          win=1;
+		        if(valid(x,y-1) && valid(x,y-2) && this->board[x][y-1]==mark && this->board[x][y-2]==mark)
+		        win=1;
+		  if(valid(x+1,y-1) && valid(x+2,y-2) && this->board[x+1][y-1]==mark && this->board[x+2][y-2]==mark)
+		  win=1;
+		  if(valid(x+1,y) && valid(x+2,y) && this->board[x+1][y]==mark && this->board[x+2][y]==mark)
+		  win=1;
+		  if(valid(x+1,y+1) && valid(x+2,y+2) && this->board[x+1][y+1]==mark && this->board[x+2][y+2]==mark)
+		  win=1;
+		     if(valid(x,y+1) && valid(x,y+2) && this->board[x][y+1]==mark && this->board[x][y+2]==mark)
+		  win=1;
+      res=res|win;
+    }
+       }
+  }
+		  return res;
     }
 
     void update_sock_fd(string player,int fd){
@@ -41,20 +80,40 @@ class game{
       this->player_2=p2;
       this->ready=true;
     }
+
     int update_board(int x,int y,int move){
       if(move!=this->turn)
         return -1;
       if(this->board[x][y]==0){
         this->board[x][y]=move;
+        this->move_count++;
+        if(this->move_count==9){
+          if(is_win(x,y,move)){
+            //turns max , winner
+            this->winner=turn;
+            return 2;
+          }else{
+            //turns max , draw game
+            return 3;
+          }
+        }
+        if(is_win(x,y,move)){
+          //winner
+          this->winner=turn;
+          return 2;
+        }
+
         if(turn==1)
           turn=2;
         else
           turn=1;
+
         return 1;
+
       }else{
-        //invalid move
         return 0;
       }
+
     }
 
     void describe(){
@@ -69,7 +128,7 @@ class game{
       str = ss.str();
       return str;
     }
-    
+
     string get_board(){
       string boardstr="";
       for(int i=0;i<3;i++){
@@ -105,6 +164,13 @@ class game{
         return this->player_1_sock_fd;
     }
 
+    string get_game_info(){
+      string m="p1,";
+      m+=this->player_1;
+      m+=",p2,";
+      m+=this->player_2;
+      return m;
+    }
     string get_player(int x){
       if(x==1)
         return player_1;

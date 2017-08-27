@@ -38,6 +38,7 @@ void * respond(void *arg){
   int flag;
   int status_code=-1;
   rcvd=recv(client,req,9999,0);
+  cout<<client<<endl;
   if(rcvd>0){
     if(strstr(req,"raw")!=NULL){
       string retval=handle_raw_msg(req);
@@ -55,9 +56,14 @@ void * respond(void *arg){
       string msg="";
       while(1){
         msg=decode(client);
+        if(msg.compare("conn_closed")==0)
+          break;
         resp=process(msg,client);
         r=encode(resp);
         send(client,r.c_str(),strlen(r.c_str()),0);
+        if(strstr(resp.c_str(),"cmd,game_end")!=NULL){
+          break;
+        }
       }
     }
     shutdown(client,SHUT_RDWR);

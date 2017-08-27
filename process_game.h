@@ -28,7 +28,7 @@ string handle_raw_msg(char * req){
     game* g=new game(gid,p_id);
     game_array.insert(game_pair(gid,g));
   }
-  return "success";
+  return "status,success";
 }
 
 string process(string msg,int sock){
@@ -37,8 +37,16 @@ string process(string msg,int sock){
   //update_sock
   if(data["cmd"].compare("update_sock")==0){
     game_array[data["game_id"]]->update_sock_fd(data["player"],sock);
+    if(game_array[data["game_id"]]->get_player_by_name(data["player"])==2){
+      int s=game_array[data["game_id"]]->get_other_player_sock(data["player"]);
+      string m="cmd,update_game_info,msg,other_player_conn,";
+      m+=game_array[data["game_id"]]->get_game_info();
+      update_other_player(m,s);
+    }
     game_array[data["game_id"]]->describe();
-    return "update sock success";
+    string x="status,success,msg,update_sock_success,";
+    x+=game_array[data["game_id"]]->get_game_info();
+    return x;
   }
   //move
   if(data["cmd"].compare("move")==0){
@@ -47,18 +55,36 @@ string process(string msg,int sock){
     if(ret==1){
       string m="cmd,oppo_move,board,";
       m+=game_array[data["game_id"]]->get_board();
+      m+=",turn,";
+      m+=game_array[data["game_id"]]->get_turn()+48;
       update_other_player(m,game_array[data["game_id"]]->get_other_player_sock(data["player"]));
-      return "success";
+      return "status,success";
+    }
+    if(ret==2 || ret ==3){
+      string m="cmd,game_end,msg,";
+      if(ret==3)
+        m+="draw_game";
+      if(ret==2)
+        m+="you_lose";
+      update_other_player(m,game_array[data["game_id"]]->get_other_player_sock(data["player"]));
+      string x="cmd,game_end,msg,";
+      if(ret==3)
+        x+="draw_game";
+      if(ret==2)
+        x+="you_win";
+      return x;
     }
     if(ret==-1)
-      return "not your turn";
+      return "status,err,msg,not your turn";
     if(ret==0)
-      return "invalid move";
+      return "status,err,msg,invalid move";
   }
   //board
   if(data["cmd"].compare("board")==0){
     string m="cmd,board_status,board,";
     m+=game_array[data["game_id"]]->get_board();
+    m+=",turn,";
+    m+=game_array[data["game_id"]]->get_turn()+48;
     return m;
   }
   return "status,failure,msg,cmd_not_found";

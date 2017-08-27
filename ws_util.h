@@ -4,34 +4,40 @@ string decode(int client){
   int len_flag=2;
   string bit_string="";
 
-  char playload_len[2];
-  recv(client,playload_len,2,0);
-  bit_string.append(bitset<8>(playload_len[0]).to_string());
-  bit_string.append((bitset<8>(playload_len[1])).to_string());
+  char payload_len[2];
+  recv(client,&payload_len[0],1,0);
+  if((int)payload_len[0]==-120){
+    return "conn_closed";
+  }
+
+  recv(client,&payload_len[1],1,0);
+
+  bit_string.append(bitset<8>(payload_len[0]).to_string());
+  bit_string.append((bitset<8>(payload_len[1])).to_string());
   bit_string=bit_string.substr(9,7);
   len1=stoi(bit_string, nullptr, 2);
   len=len1;
 
 
   if(len1==126){
-    char playload_len1[2];
-    recv(client,playload_len1,2,0);
+    char payload_len1[2];
+    recv(client,payload_len1,2,0);
     len_flag+=2;
     bit_string="";
-    bit_string.append(bitset<8>(playload_len1[0]).to_string());
-    bit_string.append(bitset<8>(playload_len1[1]).to_string());
+    bit_string.append(bitset<8>(payload_len1[0]).to_string());
+    bit_string.append(bitset<8>(payload_len1[1]).to_string());
     len2=stoi(bit_string, nullptr, 2);
     len=len2;
   }
   if(len1==127){
-    char playload_len2[4];
-    recv(client,playload_len2,4,0);
+    char payload_len2[4];
+    recv(client,payload_len2,4,0);
     len_flag+=4;
     bit_string="";
-    bit_string.append(bitset<8>(playload_len2[0]).to_string());
-    bit_string.append(bitset<8>(playload_len2[1]).to_string());
-    bit_string.append(bitset<8>(playload_len2[2]).to_string());
-    bit_string.append(bitset<8>(playload_len2[3]).to_string());
+    bit_string.append(bitset<8>(payload_len2[0]).to_string());
+    bit_string.append(bitset<8>(payload_len2[1]).to_string());
+    bit_string.append(bitset<8>(payload_len2[2]).to_string());
+    bit_string.append(bitset<8>(payload_len2[3]).to_string());
     len3=stoi(bit_string, nullptr, 2);
     len=len3;
   }

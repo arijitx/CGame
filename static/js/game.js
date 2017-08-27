@@ -1,8 +1,10 @@
 $(document).ready( function () {
-  var ws = new WebSocket("ws://localhost:8001");
+  var ws = new WebSocket("ws://10.15.28.170:8001");
 
   var player_name=read_cookie("player");
   var game_id=read_cookie("game_id");
+
+  $('#player_name').text(player_name);
 
   ws.onopen=function(){
     var m="cmd,update_sock,game_id,"+game_id+",player,"+player_name;
@@ -24,9 +26,50 @@ $(document).ready( function () {
     console.log(cmd);
     if(cmd["cmd"]=="oppo_move"){
       update_board(cmd["board"].split(" "));
+      if(cmd["turn"]=="1"){
+        $("#p1_turn").show();
+        $("#p2_turn").hide();
+      }else{
+        $("#p1_turn").hide();
+        $("#p2_turn").show();
+      }
     }
     if(cmd["cmd"]=="board_status"){
       update_board(cmd["board"].split(" "));
+      if(cmd["turn"]=="1"){
+        $("#p1_turn").show();
+        $("#p2_turn").hide();
+      }else{
+        $("#p1_turn").hide();
+        $("#p2_turn").show();
+      }
+    }
+    if(cmd["cmd"]=="game_end"){
+      alert(cmd["msg"]);
+      ws.close();
+      window.location = "/"
+    }
+    if(cmd["status"]=="success"){
+      if(cmd["msg"]=="update_sock_success"){
+        if(cmd["p1"]!=""){
+          $('#p1').text(cmd["p1"]);
+        }
+        if(cmd["p2"]!=""){
+          $('#p2').text(cmd["p2"]);
+        }
+      }
+    }
+    if(cmd["cmd"]=="update_game_info"){
+      if(cmd["p2"]!=""){
+        $('#p2').text(cmd["p2"]);
+      }
+    }
+    if(cmd["status"]=="err"){
+      $('#err').text(cmd["msg"]);
+      $('#err').show();
+    }
+    if(cmd["cmd"]=="success" && cmd["msg"]=="update_sock_success"){
+
     }
   };
 

@@ -43,8 +43,6 @@ string path_create_game(PARAMS){
   }
   string player=name;
   string game_id=name.append("xxx2");
-  // game* g=new game(game_id,player);
-  // game_array.insert(game_pair(game_id,g));
   resp.append("Set-Cookie: game_id=");
   resp.append(game_id);
   resp.append("\nSet-Cookie: player=");
@@ -64,55 +62,11 @@ string path_create_game(PARAMS){
   return resp;
 }
 
-//get_game board
-string path_board(PARAMS){
-  string game_id=data["game_id"];
-  string resp="";
-  // if(game_array.find(game_id) != game_array.end()){
-  //   game* g=game_array[game_id];
-  //   resp.append("Content-Type: application/json\n\n");
-  //   resp.append("{\"status\":\"success\",\"board\":");
-  //   resp.append(g->get_board());
-  //   resp.append("}");
-  // }
-  // else{
-  //   resp.append("Content-Type: application/json\n\n");
-  //   resp.append("{\"status\":\"fail\",\"msg\":\"no game exits\"");
-  // }
-  return resp;
-}
-
-//update_board
-string path_update_board(PARAMS){
-  string game_id=data["game_id"];
-  string player=data["player"];
-  string x=data["x"];
-  string y=data["y"];
-  // game* g=game_array[game_id];
-  // string resp="Content-Type: application/json\n\n";
-  // int xi=atoi(x.c_str());
-  // int yi=atoi(y.c_str());
-  // int playeri=g->get_player_by_name(player);
-  // int retval=g->update_board(xi,yi,playeri);
-  // if(retval==1){
-  //   resp.append("{\"status\":\"success\"}");
-  // }
-  // if(retval==-1){
-  //   resp.append("{\"status\":\"fail\",\"msg\":\"not your turn\"}");
-  // }
-  // if(retval==0){
-  //   resp.append("{\"status\":\"fail\",\"msg\":\"place already occupied\"}");
-  // }
-  // return resp;
-  return "";
-}
 
 //connect player_2
 string path_connect(PARAMS){
   string game_id=data["game_id"];
   string player=data["player"];
-  // game *g=game_array[game_id];
-  // g->update_player_2(player);
   string resp="";
   resp.append("Set-Cookie: game_id=");
   resp.append(game_id);
@@ -131,6 +85,13 @@ string path_connect(PARAMS){
   return resp;
 }
 
+string path_ws_url(PARAMS){
+  string resp="Content-Type: application/json\n\n{\"ws_url\":\"";
+  resp.append(WS_URL);
+  resp.append("\"}");
+  return resp;
+}
+
 //main path function
 string process_req(string path,map<string,string> header,map<string,string> data){
   if(!path.compare("/")){
@@ -142,17 +103,14 @@ string process_req(string path,map<string,string> header,map<string,string> data
   if(path.find("/static/")!=string::npos){
     return static_file(path);
   }
-  if(!path.compare("/board")){
-    return path_board(header, data);
-  }
-  if(!path.compare("/update_board")){
-    return path_update_board(header,data);
-  }
   if(!path.compare("/connect")){
     return path_connect(header,data);
   }
   if(!path.compare("/game_ui")){
     return static_html("game_ui.html");
+  }
+  if(!path.compare("/ws_url")){
+    return path_ws_url(header,data);
   }
   return static_html("404.html");
 }

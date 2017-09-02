@@ -31,7 +31,7 @@ string handle_raw_msg(char * req){
   return "status,success";
 }
 
-string process(string msg,int sock){
+string process(string msg,int sock,string* pname){
   map<string,string> data;
   data=process_msg(msg);
   //update_sock
@@ -43,9 +43,11 @@ string process(string msg,int sock){
       m+=game_array[data["game_id"]]->get_game_info();
       update_other_player(m,s);
     }
-    game_array[data["game_id"]]->describe();
+    cout<<data["player"]<<"  "<<GRN<<"Connected"<<RESET<<" to Game : "<<data["game_id"]<<endl;
+    // game_array[data["game_id"]]->describe();
     string x="status,success,msg,update_sock_success,";
     x+=game_array[data["game_id"]]->get_game_info();
+    *pname=data["player"];
     return x;
   }
   //move

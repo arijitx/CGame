@@ -29,6 +29,19 @@ class game{
         for(int j=0;j<3;j++)
           this->board[i][j]=0;
     }
+    void display_game(){
+      cout<<"------------------Game Info---------------------"<<endl;
+      cout<<GRN<<"Game Id : "<<this->game_id<<RESET<<endl;
+      cout<<YEL<<"Player 1 : "<<this->player_1<<"\tPlayer 2 : "<<this->player_2<<endl;
+      if(this->winner==0){
+        cout<<RED<<"DRAW GAME"<<RESET<<endl;
+      }else if(this->winner ==1){
+        cout<<RED<<"winner : "<<this->player_1<<RESET<<endl;
+      }else{
+        cout<<RED<<"Winner : "<<this->player_2<<RESET<<endl;
+      }
+      cout<<"-------------------------------------------------"<<endl;
+    }
     bool valid(int x,int y)
     {
        if(x>=0 && y>=0 && x<=2 && y<=2)
@@ -91,6 +104,7 @@ class game{
           if(is_win(x,y,move)){
             //turns max , winner
             this->winner=turn;
+            display_game();
             return 2;
           }else{
             //turns max , draw game
@@ -98,8 +112,9 @@ class game{
           }
         }
         if(is_win(x,y,move)){
-          //winner
+          //game win turns remaining
           this->winner=turn;
+          display_game();
           return 2;
         }
 

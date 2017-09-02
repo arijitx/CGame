@@ -8,11 +8,10 @@
 #include<netdb.h>
 #include<pthread.h>
 
-#include "util.h"
-#include "config.h"
-#include "http.h"
-#include "game.h"
-#include "paths.h"
+#include "common/util.h"
+#include "common/config.h"
+#include "web/http.h"
+#include "web/paths.h"
 
 
 #include<bits/stdc++.h>
@@ -28,12 +27,9 @@ void * respond(void *arg){
   int status_code=-1;
   rcvd=recv(client,req,9999,0);
   if(rcvd>0){
-    cout<<req<<endl;
-    http *p=new http(req);
-
+    http *p=new http(req,1);
     map<string,string> data=p->get_data();
     map<string,string> :: iterator it;
-    cout<<p->get_url()<<endl;
     string resp="HTTP/1.0 200 OK\nConnection: keep-alive\n";
     resp=resp+process_req(p->get_url(),p->get_header(),p->get_data());
     send(client,resp.c_str(),strlen(resp.c_str()),0);

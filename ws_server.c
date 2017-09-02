@@ -8,21 +8,17 @@
 #include<netdb.h>
 #include<pthread.h>
 
-#include "util.h"
-#include "config.h"
-#include "http.h"
-#include "game.h"
+#include "common/util.h"
+#include "common/config.h"
+#include "websocket/game.h"
 
-#include "libwshandshake.hpp"
-#include "ws_util.h"
-#include "process_game.h"
+#include "websocket/libwshandshake.hpp"
+#include "websocket/ws_util.h"
+#include "websocket/process_game.h"
+
+#include "web/http.h"
+
 #include <iostream>
-
-
-
-
-#include "paths.h"
-
 
 #include<bits/stdc++.h>
 
@@ -38,13 +34,12 @@ void * respond(void *arg){
   int flag;
   int status_code=-1;
   rcvd=recv(client,req,9999,0);
-  cout<<client<<endl;
   if(rcvd>0){
     if(strstr(req,"raw")!=NULL){
       string retval=handle_raw_msg(req);
       send(client,retval.c_str(),sizeof(retval.c_str()),0);
     }else{
-      http *p=new http(req);
+      http *p=new http(req,0);
       map<string,string> data=p->get_data();
       string key=data["Sec-WebSocket-Key"];
       char output[29] = {};
@@ -54,11 +49,14 @@ void * respond(void *arg){
       resp.append("\n\n");
       send(client,resp.c_str(),strlen(resp.c_str()),0);
       string msg="";
+      string pname="";
       while(1){
         msg=decode(client);
-        if(msg.compare("conn_closed")==0)
+        if(msg.compare("conn_closed")==0){
+          cout<<pname<<"  "<<RED<<"Disconnected"<<RESET<<endl;
           break;
-        resp=process(msg,client);
+        }
+        resp=process(msg,client,&pname);
         r=encode(resp);
         send(client,r.c_str(),strlen(r.c_str()),0);
         if(strstr(resp.c_str(),"cmd,game_end")!=NULL){

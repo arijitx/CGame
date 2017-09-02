@@ -19,8 +19,10 @@ class http{
 
   public:
     //constructor should not be this big zz.
-    http(char *raw_req){
+    http(char *raw_req,int display){
       fetch_req(raw_req);
+      if(display)
+        display_req();
     }
 
     //return url
@@ -46,7 +48,7 @@ class http{
     // display_req
     void display_req(){
       cout<<YEL"\n\t"<<this->req_type<<"\t"BLU<<this->url<<RESET;
-      cout<<YEL"\n\t"<<this->header["Host"]<<RESET"\n";
+      // cout<<YEL"\n\t"<<this->header["Host"]<<RESET"\n";
     }
 
     //fetch req header and data for post

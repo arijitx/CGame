@@ -17,7 +17,7 @@
 #include<bits/stdc++.h>
 
 using namespace std;
-
+int clients[CONMAX];
 
 
 void * respond(void *arg){
@@ -29,7 +29,6 @@ void * respond(void *arg){
   if(rcvd>0){
     http *p=new http(req,1);
     map<string,string> data=p->get_data();
-    map<string,string> :: iterator it;
     string resp="HTTP/1.0 200 OK\nConnection: keep-alive\n";
     resp=resp+process_req(p->get_url(),p->get_header(),p->get_data());
     send(client,resp.c_str(),strlen(resp.c_str()),0);
@@ -38,6 +37,11 @@ void * respond(void *arg){
     status_code=1;
   }else{
     printf(RED"Error in Recieveing \n"RESET);
+  }
+  for(int i=0;i<CONMAX;i++){
+    if(clients[i]==client){
+      clients[i]=-1;
+    }
   }
 }
 
@@ -83,14 +87,15 @@ int start_server(int PORT){
 }
 
 int main(){
-  int PORT=8080;
+  int PORT=PORT_WEB;
   //printing menu and options and Configs
   print_header(1);
   print_config();
+  printf("WEB SERVER\n");
   pthread_attr_t ptatr;
   pthread_attr_init(&ptatr);
   //init array for storing client info
-  int clients[CONMAX];
+
   pthread_t pthreads[CONMAX];
   int i;
   for(i=0;i<CONMAX;i++)

@@ -20,9 +20,11 @@ void print_header(int version){
 
 void print_config(){
   printf(YEL"\n\t Config Current :\n\n" RESET);
-  //printf("\n\t PORT                \t : %d",PORT);
-  printf("\n\t Max Connections     \t : %d",CONMAX);
-  printf("\n\t WebServer Directory \t : " ROOT);
+  printf("\n\t PORT WebServer        \t : %d",PORT_WEB);
+  printf("\n\t PORT WebSocket Server \t : %d",PORT_WS);
+  printf("\n\t WebSocket Url         \t : %s",WS_URL);
+  printf("\n\t Max Connections       \t : %d",CONMAX);
+  // #printf("\n\t WebServer Directory  \t : " ROOT);
   printf("\n\n");
 }
 

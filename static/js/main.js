@@ -15,10 +15,14 @@ $(document).ready( function () {
       var game_id=document.getElementById("game_id_joiner").value
       //console.log("/connect?game_id="+game_id+"&player="+player_name);
       $.get("/connect?game_id="+game_id+"&player="+player_name, function(data, status){
-        setTimeout(function(){
-          window.location = "/game_ui" },
-          3000);
-      });
+        if(data.status=="success"){
+          setTimeout(function(){
+            window.location = "/game_ui" },
+            3000);
 
+        }else{
+          alert(data.msg);
+        }
+      });
   });
 });

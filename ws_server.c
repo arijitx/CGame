@@ -60,15 +60,20 @@ void * respond(void *arg){
         r=encode(resp);
         send(client,r.c_str(),strlen(r.c_str()),0);
         if(strstr(resp.c_str(),"cmd,game_end")!=NULL){
+          cout<<pname<<"  "<<RED<<"Disconnected"<<RESET<<endl;
           break;
         }
       }
     }
     shutdown(client,SHUT_RDWR);
     close(client);
-    status_code=1;
   }else{
     printf(RED"Error in Recieveing \n"RESET);
+  }
+  for(int i=0;i<CONMAX;i++){
+    if(clients[i]==client){
+      clients[i]=-1;
+    }
   }
 }
 
@@ -113,10 +118,11 @@ int start_server(int PORT){
   return server_fd;
 }
 int main(){
-  int PORT=8001;
+  int PORT=PORT_WS;
   //printing menu and options and Configs
   print_header(1);
   print_config();
+  printf("WEBSOCKET SERVER\n");
   pthread_attr_t ptatr;
   pthread_attr_init(&ptatr);
   //init array for storing client info

@@ -2,7 +2,7 @@ $(document).ready( function () {
   $.get("/ws_url", function(data, status){
     console.log(data);
     url=data.ws_url;
-    var ws = new WebSocket("ws://10.15.28.171:8001");
+    var ws = new WebSocket(url);
 
     var player_name=read_cookie("player");
     var game_id=read_cookie("game_id");
@@ -48,8 +48,9 @@ $(document).ready( function () {
         }
       }
       if(cmd["cmd"]=="game_end"){
-        alert(cmd["msg"]);
         ws.close();
+        alert(cmd["msg"]);
+
         window.location = "/"
       }
       if(cmd["status"]=="success"){
@@ -68,8 +69,7 @@ $(document).ready( function () {
         }
       }
       if(cmd["status"]=="err"){
-        $('#err').text(cmd["msg"]);
-        $('#err').show();
+        alert(cmd.msg);
       }
       if(cmd["cmd"]=="success" && cmd["msg"]=="update_sock_success"){
 

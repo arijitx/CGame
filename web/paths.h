@@ -11,7 +11,7 @@
 
 using namespace std;
 
-
+set<string> game_ids;
 
 //send static html files
 string static_html(string path){
@@ -59,6 +59,7 @@ string path_create_game(PARAMS){
   m+=",";
   m+=player;
   send_msg(m);
+  game_ids.insert(game_id);
   return resp;
 }
 
@@ -76,12 +77,16 @@ string path_connect(PARAMS){
   resp.append("2");
   resp.append("\n");
   resp.append("Content-Type: application/json\n\n");
-  resp.append("{\"status\":\"success\"}");
-  string m="raw,";
-  m+=game_id;
-  m+=",";
-  m+=player;
-  send_msg(m);
+  if(game_ids.find(game_id)!=game_ids.end()){
+    resp.append("{\"status\":\"success\"}");
+    string m="raw,";
+    m+=game_id;
+    m+=",";
+    m+=player;
+    send_msg(m);
+  }else{
+    resp+="{\"status\":\"fail\",\"msg\":\"no_game_found\"}";
+  }
   return resp;
 }
 

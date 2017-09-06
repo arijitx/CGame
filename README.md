@@ -3,4 +3,4 @@ A Tic Tac Toe Game built on C Webserver Powered By Javascript WebSockets and A W
 
 <img src="imgs/screen1.png"/>
 <br>
-<img src="imgs/screen2.png"/>
+<img src="imgs/screen2.gif"/>

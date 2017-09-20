@@ -59,14 +59,14 @@ class http{
       char *line=(char *)malloc(sizeof(char)*1000);
       pointers_to_free[i++]=line;
       char *header_ptr;
+      char *ptr;
       char *key=(char *)malloc(sizeof(char)*200);
       pointers_to_free[i++]=key;
       char *value=(char *)malloc(sizeof(char)*600);
       pointers_to_free[i++]=value;
       char *line1=strtok_r(raw_req,"\n",&header_ptr);
-
-      this-> req_type=strtok(line1," ");
-      this-> url=strtok(NULL," ");
+      this-> req_type=strtok_r(line1," ",&ptr);
+      this-> url=strtok_r(ptr," ",&ptr);
       if(this->req_type.compare("GET")==0){
         fetch_data_GET();
       }
@@ -76,8 +76,8 @@ class http{
         if(line==NULL){
           break;
         }
-        key=strtok(line,":");
-        value=strtok(NULL,"\n");
+        key=strtok_r(line,":",&ptr);
+        value=strtok_r(ptr,"\n",&ptr);
         if (key == NULL || value == NULL)
           break;
         if(strstr(STD_HEADER,key)!=NULL)
@@ -96,6 +96,7 @@ class http{
       char *url=new char[this->url.length()+1];
       strcpy(url,this->url.c_str());
       char *header_ptr;
+      char *ptr;
       char *pointers_to_free[3];
       int i=0;
       char *key=(char *)malloc(sizeof(char)*100);
@@ -110,8 +111,8 @@ class http{
         line=strtok_r(header_ptr,"&",&header_ptr);
         if(line==NULL)
           break;
-        key=strtok(line,"=");
-        value=strtok(NULL,"=");
+        key=strtok_r(line,"=",&ptr);
+        value=strtok_r(NULL,"=",&ptr);
         if(key == NULL || value == NULL)
           break;
         this->data[key]=value;

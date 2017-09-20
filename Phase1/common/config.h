@@ -1,4 +1,4 @@
-#define CONMAX 1000
+#define CONMAX 10
 #define BYTES 1024
 #define PORT_WEB  8080
 #define PORT_WS 8001

@@ -102,11 +102,11 @@ def test(N):
     return td
 
 for N in range(N_min,N_max+1,step):
-    pro = subprocess.Popen('./server.out', stdout=subprocess.PIPE,shell=True, preexec_fn=os.setsid)
-    print('Started Server Pid :',os.getpgid(pro.pid))
+    #pro = subprocess.Popen('./a.out', stdout=subprocess.PIPE,shell=True, preexec_fn=os.setsid)
+    #print('Started Server Pid :',os.getpgid(pro.pid))
     td=test(N)
     test_data.append(td)
-    os.killpg(os.getpgid(pro.pid), signal.SIGTERM)
+    #os.killpg(os.getpgid(pro.pid), signal.SIGTERM)
     time.sleep(2)
 
 fig,ax=plt.subplots()
